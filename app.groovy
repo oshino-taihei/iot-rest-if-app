@@ -8,6 +8,7 @@ class IoTRestIfApp {
   private static final String IF_DIR = '/u01/shares/IF'
 
   @RequestMapping("/")
+  @ResponseBody
   String home() { 'please POST request to /toApriso/<IFID> or /toEBS/<IFID>' }
 
   @RequestMapping(value = "/toApriso/{ifid}", method = RequestMethod.POST)
