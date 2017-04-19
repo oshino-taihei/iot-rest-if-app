@@ -1,31 +1,37 @@
-@Grab('spring-boot-starter-thymeleaf')
 @Grab('groovy-all')
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.slf4j.*
 import groovy.json.*
 
 @Controller
 class IoTRestIfApp {
   private static final Logger logger = LoggerFactory.getLogger(IoTRestIfApp.class)
+  private static final String IF_DIR = '/u01/shares/IF'
 
   @RequestMapping("/")
-  String home() {
-    "home"
+  String home() { 'please POST request to /toApriso/<IFID> or /toEBS/<IFID>' }
+
+  @RequestMapping(value = "/toApriso/{ifid}", method = RequestMethod.POST)
+  @ResponseBody
+  public String createAprisoTsv(@PathVariable String ifid, @RequestBody String payload) {
+    createTsv(new File("${IF_DIR}/toApriso/${ifid}.tsv"), payload)
   }
 
-  @RequestMapping(value = "/tsv", method = RequestMethod.POST)
+  @RequestMapping(value = "/toEBS/{ifid}", method = RequestMethod.POST)
   @ResponseBody
-  public String createTsv(@RequestBody String payload) {
+  public String createEbsTsv(@PathVariable String ifid, @RequestBody String payload) {
+    createTsv(new File("${IF_DIR}/toEBS/${ifid}.tsv"), payload)
+  }
+
+  private String createTsv(File tsvFile, String payload) {
     try{
-      def jsonBody = new JsonSlurper().parseText(payload)
-      def data = jsonBody["payload"]["data"]
-      logger.info("post request: data=[${data}]")
-      new File('C:/tmp/test.tsv').withWriterAppend('UTF-8') { w ->
-        w << data.collect{ it.value }.join("\t") << "\n" // 改行文字はLFで固定
-      }
-    } catch(Exception e) {
-      logger.error(e)
+      def json = new JsonSlurper().parseText(payload)
+      def message = json["payload"]["data"].collect{ it.value }.join("\t")
+      logger.info("file=[${tsvFile}] message=[${message}]")
+      tsvFile.withWriterAppend('UTF-8') { writer -> writer << message +  "\n" }
+    } catch(e) {
+      logger.error(e.getMessage())
+      return "{\"status\":\"FAILURE\",\"error\":\"${e.getMessage()}\"}"
     }
-    'OK'
+    '{"status":"SUCCESS"}'
   }
 }
