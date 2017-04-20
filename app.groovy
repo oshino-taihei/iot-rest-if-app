@@ -19,33 +19,33 @@ class IoTRestIfApp {
 
   @RequestMapping("/")
   @ResponseBody
-  String home() { 'please POST request to /toApriso/<IFID> or /toEBS/<IFID> or /toDB' }
+  String home() { 'please POST request to /Apriso/<IFID> or /EBS/<IFID> or /DB' }
 
-  @RequestMapping(value = "/toApriso/{ifid}", method = RequestMethod.GET)
+  @RequestMapping(value = "/Apriso/{ifid}", method = RequestMethod.GET)
   @ResponseBody
   public String getAprisoTsv() { GET_RESPONSE }
 
-  @RequestMapping(value = "/toApriso/{ifid}", method = RequestMethod.POST)
+  @RequestMapping(value = "/Apriso/{ifid}", method = RequestMethod.POST)
   @ResponseBody
   public String createAprisoTsv(@PathVariable String ifid, @RequestBody String payload) {
     createTsv(new File("${IF_DIR}/toApriso/${ifid}.tsv"), payload)
   }
 
-  @RequestMapping(value = "/toEBS/{ifid}", method = RequestMethod.GET)
+  @RequestMapping(value = "/EBS/{ifid}", method = RequestMethod.GET)
   @ResponseBody
   public String getEbsTsv() { GET_RESPONSE }
 
-  @RequestMapping(value = "/toEBS/{ifid}", method = RequestMethod.POST)
+  @RequestMapping(value = "/EBS/{ifid}", method = RequestMethod.POST)
   @ResponseBody
   public String createEbsTsv(@PathVariable String ifid, @RequestBody String payload) {
     createTsv(new File("${IF_DIR}/toEBS/${ifid}.tsv"), payload)
   }
 
-  @RequestMapping(value = '/toDB' , method = RequestMethod.GET)
+  @RequestMapping(value = '/DB' , method = RequestMethod.GET)
   @ResponseBody
   public String getDb() { GET_RESPONSE }
 
-  @RequestMapping(value = '/toDB' , method = RequestMethod.POST)
+  @RequestMapping(value = '/DB' , method = RequestMethod.POST)
   @ResponseBody
   public String createData(@RequestBody String payload) {
     try {
